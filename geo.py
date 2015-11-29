@@ -20,6 +20,7 @@ class geoReader():
     def __init__(self, doc_in):
         self.doc_in = doc_in
         self.header = None
+        self.header_limit = -1
 
     def __enter__(self):
         """Open the file.
