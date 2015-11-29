@@ -59,7 +59,16 @@ class geoReader():
     def parseLine(self, line):
         """Parse a line.
         """
-        line_parsed = line
+
+        rejected = ["---\n", "\n"]
+
+        if line in rejected:
+            line_parsed = ""
+        elif line[0] == "#":
+            line_parsed = "\n<h2>%s</h2>\n" % line[2:]
+        else:
+            line_parsed = "\n<p>%s</p>\n" % line
+
         return line_parsed
 
     def parse(self):
@@ -70,9 +79,43 @@ class geoReader():
         self.parseHeader()
 
         # Init the output file
-        self.doc_out = "%s.html" % self.header['version']
+        self.doc_out = "%s.php" % self.header['version']
 
         with open(self.doc_out, 'w') as f_out:
+            # Write down the header
+            # ... version
+            f_out.write(
+                    "<p>Documentation %s</p>\n"
+                    % self.header["version"])
+
+            # ... parts list
+            f_out.write("\n")
+            f_out.write(
+                "<section id=r\"partsList\">\n" \
+                "<h2>Composants</h2>\n" \
+                "<dl>\n")
+
+            for item in self.header["items"]:
+                src = "../i/doc/%s/%s" % (
+                    self.header["version"],
+                    item["img"])
+
+                f_out.write(
+                        "   <dt><img src=\"%s\" /></dt>\n" \
+                        "   <dd>%s</dd>\n" % (
+                        src, item["description"]))
+
+            f_out.write(
+                    "</dl>\n" \
+                    "\n" \
+                    "</section>\n")
+
+            # ... intro
+            f_out.write("\n")
+            f_out.write(
+                    "<section id=\"doc\">\n" \
+                    "<h2>Notice de montage</h2>")
+
             # Parse the rest of the document
             self.f_in.seek(self.header_limit)
 
@@ -82,8 +125,6 @@ class geoReader():
 
                 # Write it out
                 f_out.write(line_parsed)
-
-
 
 
 # Read the document
