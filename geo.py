@@ -28,6 +28,9 @@ class geoReader():
         self.header = None
         self.header_limit = -1
 
+        # Parsing flags
+        self.pf_inP = False
+
     def __enter__(self):
         """Open the file.
         """
@@ -60,20 +63,39 @@ class geoReader():
         """Parse a line.
         """
 
-        rejected = ["---\n", "\n"]
+        rejected = ["---\n"]
+
+        line_parsed = ""
 
         if line in rejected:
-            line_parsed = ""
+            line_parsed += ""
+
         elif line[0] == "#":
-            line_parsed = "\n<h2>%s</h2>\n" % line[2:]
+            line_parsed += "\n<h3>%s</h3>\n" % line[2:-1]
+
+        elif line == "\n":
+            if self.pf_inP:
+                # Close a paragrah
+                self.pf_inP = False
+                line_parsed += "</p>\n"
+            else:
+                line_parsed += ""
+
         else:
-            line_parsed = "\n<p>%s</p>\n" % line
+            if not self.pf_inP:
+                self.pf_inP = True
+                line_parsed += "\n<p>"
+
+            line_parsed += "%s " % line[:-1]
 
         return line_parsed
 
     def parse(self):
         """Parse all the document.
         """
+        
+        # Reset flags
+        self.pf_inP = False
 
         # Parse the header
         self.parseHeader()
@@ -114,7 +136,7 @@ class geoReader():
             f_out.write("\n")
             f_out.write(
                     "<section id=\"doc\">\n" \
-                    "<h2>Notice de montage</h2>")
+                    "<h2>Notice de montage</h2>\n")
 
             # Parse the rest of the document
             self.f_in.seek(self.header_limit)
@@ -125,6 +147,15 @@ class geoReader():
 
                 # Write it out
                 f_out.write(line_parsed)
+
+            # Close any open paragraph
+            if self.pf_inP:
+                self.pg_inP = False
+                f_out.write("</p>\n")
+
+            # ... ending
+            f_out.write("\n")
+            f_out.write("</section>")
 
 
 # Read the document
