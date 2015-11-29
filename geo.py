@@ -37,10 +37,10 @@ class geoReader():
         """Parse the header of the file.
         """
         s = mmap.mmap(self.f.fileno(), 0, access=mmap.ACCESS_READ)
-        m = s.find(b'---')
+        self.header_limit = s.find(b'---')
 
-        if m != -1:
-            self.header = yaml.load(s[0:m])
+        if self.header_limit != -1:
+            self.header = yaml.load(s[0:self.header_limit])
             print(self.header['name'])
         else:
             print("Cannot load the header")
