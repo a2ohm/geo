@@ -1,6 +1,7 @@
 # in/out files
 *.md
 *.html
+*.php
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
