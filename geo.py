@@ -14,13 +14,15 @@ print("-- by antoine.delhomme@espci.org --")
 print("-----------------------------------")
 
 doc_in = "./doc/001-v2-doc"
+dir_out = "./doc"
 
 class geoReader():
 
-    def __init__(self, doc_name):
+    def __init__(self, doc_name, dir_out = "./doc"):
         self.doc_name = doc_name
         self.doc_in = "%s.md" % self.doc_name
         self.doc_out = ""
+        self.dir_out = dir_out
 
         self.f_in = None
         self.f_in_mmap = None
@@ -101,7 +103,8 @@ class geoReader():
         self.parseHeader()
 
         # Init the output file
-        self.doc_out = "%s.php" % self.header['version']
+        self.doc_out = "%s/%s.php" % (
+                self.dir_out, self.header['version'])
 
         with open(self.doc_out, 'w') as f_out:
             # Write down the header
@@ -159,5 +162,5 @@ class geoReader():
 
 
 # Read the document
-with geoReader(doc_in) as g:
+with geoReader(doc_in, dir_out) as g:
     g.parse()
