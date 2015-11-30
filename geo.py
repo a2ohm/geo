@@ -8,6 +8,7 @@ documentation for Kit&Pack.
 
 import mmap
 import yaml
+import re
 
 print("---------------------------- geo --")
 print("-- by antoine.delhomme@espci.org --")
@@ -65,6 +66,10 @@ class geoReader():
         """Parse a line.
         """
 
+        # Regex
+        r_title = re.match("(#+) (\w+)", line)
+        r_img = re.match("\!\[(.+)\]\((.+)\)", line)
+
         rejected = ["---\n"]
 
         line_parsed = ""
@@ -72,8 +77,21 @@ class geoReader():
         if line in rejected:
             line_parsed += ""
 
-        elif line[0] == "#":
-            line_parsed += "\n<h3>%s</h3>\n" % line[2:-1]
+        elif r_title:
+            # Parse titles
+            rank = len(r_title.group(1)) + 2
+            title = r_title.group(2)
+
+            line_parsed += "\n<h%d>%s</h%d>\n" % (
+                    rank, title, rank)
+
+        elif r_img:
+            # Parse image
+            src = r_img.group(1)
+            alt = r_img.group(2)
+
+            line_parsed += "\n<img src=\"%s\" alt=\"%s\" />\n" % (
+                    src, alt)
 
         elif line == "\n":
             if self.pf_inP:
