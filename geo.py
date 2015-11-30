@@ -13,7 +13,7 @@ print("---------------------------- geo --")
 print("-- by antoine.delhomme@espci.org --")
 print("-----------------------------------")
 
-doc_in = "./001-v2-doc"
+doc_in = "./doc/001-v2-doc"
 
 class geoReader():
 
