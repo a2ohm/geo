@@ -34,6 +34,7 @@ class geoReader():
         """Close the file.
         """
         self.f_in.close()
+
     def parseHeader(self):
         """Parse the header of the file.
         """
@@ -54,7 +55,7 @@ class geoReader():
         """
 
         # Regex
-        r_title = re.match("(#+) (\w+)", line)
+        r_title = re.match("(#+) (.+)", line)
         r_img = re.match("\!\[(.+)\]\((.+)\)", line)
 
         rejected = ["---\n"]
