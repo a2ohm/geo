@@ -7,9 +7,9 @@ import re
 
 class geoReader():
 
-    def __init__(self, doc_name, dir_out = "./doc"):
-        self.doc_name = doc_name
-        self.doc_in = "%s.md" % self.doc_name
+    def __init__(self, doc_in, dir_out = "./doc"):
+        self.doc_in = doc_in
+
         self.doc_out = ""
         self.dir_out = dir_out
 
