@@ -53,7 +53,7 @@ for root, dirs, files in os.walk(dir_in):
             g.parse()
 
             # List version of docs by project
-            project_id = g.header['project_id']
+            project_id = g.header['long_project_id']
             version = versions.get(project_id, [])
             versions[project_id] = version + [g.header['version']]
 
