@@ -122,12 +122,11 @@ class geoReader():
                         "\t<li>\n" \
                         "\t\t<div class=\"item\">\n" \
                         "\t\t\t%s\n" \
-                        "\t\t\t<p class=\"item_name\">%s</p>\n" \
+                        "\t\t\t<p class=\"item_name\">%s x%s</p>\n" \
                         "\t\t\t<p class=\"item_description\">%s</p>\n" \
-                        "\t\t\t<p class=\"item_qty\">%s</p>\n" \
                         "\t\t</div>\n" \
                         "\t</li>\n" % (
-                        img, item['name'], item['description'], item['qty']))
+                        img, item['name'], item['qty'], item['description']))
 
             f_out.write(
                 "</ul>\n" \
