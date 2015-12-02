@@ -67,12 +67,7 @@ class geoReader():
             line_parsed += self.parse_title(re_title)
 
         elif re_img:
-            # Parse image
-            src = re_img.group(1)
-            alt = re_img.group(2)
-
-            line_parsed += "\n<img src=\"%s\" alt=\"%s\" />\n" % (
-                    src, alt)
+            line_parsed += self.parse_image(re_img)
 
         elif line == "\n":
             if self.pf_inP:
@@ -159,6 +154,10 @@ class geoReader():
             f_out.write("\n")
             f_out.write("</section>")
 
+    # ----------------
+    # -- subparsers --
+    # ----------------
+
     def parse_title(self, re_title):
         """Parse a title based on the resuslt of the regex.
         """
@@ -167,3 +166,24 @@ class geoReader():
 
         return "\n<h%d>%s</h%d>\n" % (
                 rank, title, rank)
+
+    def parse_image(self, re_img):
+        """Parse an image based on the resuslt of the regex.
+        """
+        src = re_img.group(1)
+        alt = re_img.group(2)
+
+        parsed_line  = "\n"
+        parsed_line += self.write_img(src, alt)
+        parsed_line += "\n"
+
+        return parsed_line
+
+    # -------------
+    # -- writers --
+    # -------------
+
+    def write_img(self, src, alt, autoPath = True):
+        if autoPath == True:
+            src = "../i/doc/%s" % src
+        return "<img src=\"%s\" alt=\"%s\" />" % (src, alt)
