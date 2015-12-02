@@ -115,14 +115,13 @@ class geoReader():
                 "<dl>\n")
 
             for item in self.header["items"]:
-                src = "../i/doc/%s/%s" % (
-                    self.header["version"],
-                    item["img"])
+                img = self.write_img(src=item['img'],
+                        alt=item['description'])
 
                 f_out.write(
-                        "   <dt><img src=\"%s\" /></dt>\n" \
+                        "   <dt>%s</dt>\n" \
                         "   <dd>%s</dd>\n" % (
-                        src, item["description"]))
+                        img, item["description"]))
 
             f_out.write(
                     "</dl>\n" \
@@ -183,7 +182,7 @@ class geoReader():
     # -- writers --
     # -------------
 
-    def write_img(self, src, alt, autoPath = True):
+    def write_img(self, src, alt="", autoPath = True):
         if autoPath == True:
             src = "../i/doc/%s/%s" % (self.header['version'], src)
         return "<img src=\"%s\" alt=\"%s\" />" % (src, alt)
