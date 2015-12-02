@@ -14,7 +14,6 @@ class geoReader():
         self.dir_out = dir_out
 
         self.f_in = None
-        self.f_in_mmap = None
 
         self.header = None
         self.header_limit = -1
@@ -25,9 +24,7 @@ class geoReader():
     def __enter__(self):
         """Open the file.
         """
-
         self.f_in = open(self.doc_in, 'r')
-
         return self
 
     def __exit__(self, type, value, traceback):
@@ -40,13 +37,13 @@ class geoReader():
         """
 
         if self.header_limit < 0:
-            self.f_in_mmap = mmap.mmap(self.f_in.fileno(),
+            f_in_mmap = mmap.mmap(self.f_in.fileno(),
                     0, access=mmap.ACCESS_READ)
-            self.header_limit = self.f_in_mmap.find(b'---')
+            self.header_limit = f_in_mmap.find(b'---')
 
             if self.header_limit != -1:
                 self.header = yaml.load(
-                        self.f_in_mmap[0:self.header_limit])
+                        f_in_mmap[0:self.header_limit])
             else:
                 raise("Cannot load the header")
 
@@ -55,28 +52,24 @@ class geoReader():
         """
 
         # Regex
-        r_title = re.match("(#+) (.+)", line)
-        r_img = re.match("\!\[(.+)\]\((.+)\)", line)
+        re_title = re.match("(#+) (.+)", line)
+        re_img = re.match("\!\[(.+)\]\((.+)\)", line)
 
         rejected = ["---\n"]
 
+        # Init the parsed line
         line_parsed = ""
 
         if line in rejected:
             line_parsed += ""
 
-        elif r_title:
-            # Parse titles
-            rank = len(r_title.group(1)) + 2
-            title = r_title.group(2)
+        elif re_title:
+            line_parsed += self.parse_title(re_title)
 
-            line_parsed += "\n<h%d>%s</h%d>\n" % (
-                    rank, title, rank)
-
-        elif r_img:
+        elif re_img:
             # Parse image
-            src = r_img.group(1)
-            alt = r_img.group(2)
+            src = re_img.group(1)
+            alt = re_img.group(2)
 
             line_parsed += "\n<img src=\"%s\" alt=\"%s\" />\n" % (
                     src, alt)
@@ -165,3 +158,12 @@ class geoReader():
             # ... ending
             f_out.write("\n")
             f_out.write("</section>")
+
+    def parse_title(self, re_title):
+        """Parse a title based on the resuslt of the regex.
+        """
+        rank = len(re_title.group(1)) + 2
+        title = re_title.group(2)
+
+        return "\n<h%d>%s</h%d>\n" % (
+                rank, title, rank)
