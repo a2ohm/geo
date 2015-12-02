@@ -185,5 +185,5 @@ class geoReader():
 
     def write_img(self, src, alt, autoPath = True):
         if autoPath == True:
-            src = "../i/doc/%s" % src
+            src = "../i/doc/%s/%s" % (self.header['version'], src)
         return "<img src=\"%s\" alt=\"%s\" />" % (src, alt)
