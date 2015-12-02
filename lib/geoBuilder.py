@@ -28,7 +28,7 @@ class geoBuilder():
                     "\n" \
                     "<title>Kit&Pack − Ultimate Power Booster</title>\n" \
                     "<link rel=\"shortcut icon\" type=\"image/png\" href=\"../favicon.png\"/>" \
-                    "<link rel=\"stylesheet\" type=\"text/css\" href=\"../css/doc-1.css\" />\n"
+                    "<link rel=\"stylesheet\" type=\"text/css\" href=\"../css/doc-2.css\" />\n"
                     "\n" \
                     "</head>\n" \
                     "<body>\n" \
