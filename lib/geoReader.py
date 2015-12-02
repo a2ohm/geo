@@ -122,7 +122,7 @@ class geoReader():
             # ... parts list
             f_out.write("\n")
             f_out.write(
-                "<section id=r\"partsList\">\n" \
+                "<section id=\"partsList\">\n" \
                 "<h2>Composants</h2>\n" \
                 "<dl>\n")
 

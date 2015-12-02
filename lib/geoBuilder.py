@@ -40,7 +40,7 @@ class geoBuilder():
             f.write("<p>Versions de cette documentation.</p>\n")
             f.write("<ul>\n")
             for v in self.versions:
-                f.write("\t<li><a href=\"%s.php\" />%s</a></li>\n" % (
+                f.write("\t<li><a href=\"%s.php\">%s</a></li>\n" % (
                     v, v))
             f.write("</ul>\n\n")
 
