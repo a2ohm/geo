@@ -13,6 +13,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Class / libraries
+__init__.py
+
 # Distribution / packaging
 .Python
 env/
@@ -22,7 +25,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/
 lib64/
 parts/
 sdist/
