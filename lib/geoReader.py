@@ -112,27 +112,33 @@ class geoReader():
             f_out.write(
                 "<section id=\"partsList\">\n" \
                 "<h2>Composants</h2>\n" \
-                "<dl>\n")
+                "<ul>\n")
 
             for item in self.header["items"]:
                 img = self.write_img(src=item['img'],
                         alt=item['description'])
 
                 f_out.write(
-                        "   <dt>%s</dt>\n" \
-                        "   <dd>%s</dd>\n" % (
-                        img, item["description"]))
+                        "\t<li>\n" \
+                        "\t\t<div class=\"item\">\n" \
+                        "\t\t\t%s\n" \
+                        "\t\t\t<p class=\"item_name\">%s</p>\n" \
+                        "\t\t\t<p class=\"item_description\">%s</p>\n" \
+                        "\t\t\t<p class=\"item_qty\">%s</p>\n" \
+                        "\t\t</div>\n" \
+                        "\t</li>\n" % (
+                        img, item['name'], item['description'], item['qty']))
 
             f_out.write(
-                    "</dl>\n" \
-                    "\n" \
-                    "</section>\n")
+                "</ul>\n" \
+                "\n" \
+                "</section>\n")
 
             # ... intro
             f_out.write("\n")
             f_out.write(
-                    "<section id=\"doc\">\n" \
-                    "<h2>Notice de montage</h2>\n")
+                "<section id=\"doc\">\n" \
+                "<h2>Notice de montage</h2>\n")
 
             # Parse the rest of the document
             self.f_in.seek(self.header_limit)
