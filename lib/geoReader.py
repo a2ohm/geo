@@ -115,18 +115,22 @@ class geoReader():
                 "<ul>\n")
 
             for item in self.header["items"]:
-                img = self.write_img(src=item['img'],
-                        alt=item['description'])
+                img_path = self.img_path(src=item['img'])
+                img = self.write_img(src=img_path,
+                        alt=item['description'],
+                        autoPath=False)
 
                 f_out.write(
                         "\t<li>\n" \
                         "\t\t<div class=\"item\">\n" \
-                        "\t\t\t%s\n" \
+                        "\t\t\t<a href=\"%s\">\n" \
+                        "\t\t\t\t%s\n" \
+                        "\t\t\t</a>\n" \
                         "\t\t\t<p class=\"item_name\">%s x%s</p>\n" \
                         "\t\t\t<p class=\"item_description\">%s</p>\n" \
                         "\t\t</div>\n" \
                         "\t</li>\n" % (
-                        img, item['name'], item['qty'], item['description']))
+                        img_path, img, item['name'], item['qty'], item['description']))
 
             f_out.write(
                 "</ul>\n" \
@@ -189,5 +193,8 @@ class geoReader():
 
     def write_img(self, src, alt="", autoPath = True):
         if autoPath == True:
-            src = "../i/doc/%s/%s" % (self.header['long_project_id'], src)
+            src = self.img_path(src)
         return "<img src=\"%s\" alt=\"%s\" />" % (src, alt)
+
+    def img_path(self, src):
+        return "../i/doc/%s/%s" % (self.header['long_project_id'], src)
