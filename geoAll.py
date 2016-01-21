@@ -58,6 +58,6 @@ for root, dirs, files in os.walk(dir_in):
             version = versions.get(project_id, [])
             versions[project_id] = version + [g.header['version']]
 
-for project_id, doc_versions in versions.items():
-    g = geoBuilder(project_id, doc_versions, dir_out)
-    g.makeDocFile()
+#for project_id, doc_versions in versions.items():
+#    g = geoBuilder(project_id, doc_versions, dir_out)
+#    g.makeDocFile()
