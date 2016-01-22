@@ -9,10 +9,10 @@ documentation for Kit&Pack.
 import argparse
 import os
 import re
+import yaml
 from os.path import join, getsize
 
 from lib.geoReader import geoReader
-from lib.geoBuilder import geoBuilder
 
 print("------------------------- geoAll --")
 print("-- by antoine.delhomme@espci.org --")
@@ -32,7 +32,7 @@ args = parser.parse_args()
 dir_in = args.dir_in
 dir_out = args.dir_out
 
-versions = {}
+doc_index = {}
 
 for root, dirs, files in os.walk(dir_in):
     if '.git' in dirs:
@@ -49,14 +49,31 @@ for root, dirs, files in os.walk(dir_in):
     # Process each of them
     for f in filesToProcess:
 
+        print('%s' % f)
+
         with geoReader(f, dir_out) as g:
             # Parse the file
             g.parse()
 
-            # List version of docs by project
+            # Save metadata in the index
             project_id = g.header['long_project_id']
-            version = versions.get(project_id, [])
-            versions[project_id] = version + [g.header['version']]
+            name = g.header['name']
+            version = g.header['version']
+
+            if project_id not in doc_index:
+                doc_index[project_id] = {}
+
+            doc_index[project_id]["name"] = name
+            versions = doc_index[project_id].get("versions_all", [])
+            doc_index[project_id]["versions_all"] = versions + [version]
+
+for project_id in doc_index.keys():
+    doc_index[project_id]["version_last"] = max(doc_index[project_id]["versions_all"])
+
+doc_index_file = "%s/docs.yaml" % dir_out
+
+with open(doc_index_file, 'w') as f:
+    yaml.dump(doc_index, f)
 
 #for project_id, doc_versions in versions.items():
 #    g = geoBuilder(project_id, doc_versions, dir_out)
