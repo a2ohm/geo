@@ -7,6 +7,10 @@ import re
 
 class geoReader():
 
+    skill_badges = {
+            "solder" : ("Souder", "../i/badges/solder.png")
+            }
+
     def __init__(self, doc_in, dir_out = "./doc"):
         self.doc_in = doc_in
 
@@ -106,6 +110,35 @@ class geoReader():
             f_out.write(
                     "<p>Documentation %s</p>\n"
                     % self.header["version"])
+
+            # ... skill bagdes
+            skills = self.header.get("skills", [])
+            if skills:
+                f_out.write(
+                        "<section id=\"skillsList\">\n" \
+                        "<h2>Compétences</h2>\n" \
+                        "<ul>\n")
+
+                for skill, lvl in self.header.get("skills", []):
+                    skill_name = geoReader.skill_badges[skill][0]
+                    skill_badge = self.write_img(
+                            src=geoReader.skill_badges[skill][1],
+                            alt=skill_name,
+                            autoPath=False)
+                    f_out.write(
+                            "\t<li>\n" \
+                            "\t\t<div class=\"skill\">\n" \
+                            "\t\t\t%s\n" \
+                            "\t\t\t<p class=\"skill_name\">%s</p>" \
+                            "\t\t\t<p class=\"skill_lvl\">Niveau %d.</p>" \
+                            "\t\t</div>\n" \
+                            "\t</li>\n" % (
+                                skill_badge, skill_name, lvl))
+            f_out.write(
+                "</ul>\n" \
+                "\n" \
+                "</section>\n")
+
 
             # ... parts list
             f_out.write("\n")
