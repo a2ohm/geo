@@ -22,6 +22,8 @@ class geoReader():
         self.header = None
         self.header_limit = -1
 
+        self.items = {}
+
         # Parsing flags
         self.pf_inP = False
 
@@ -51,13 +53,26 @@ class geoReader():
             else:
                 raise("Cannot load the header")
 
+            # Parse the items list for further uses
+            for item in self.header["items"]:
+                item_dict = {}
+                item_dict["name"] = item['name']
+                item_dict["qty"] = item['qty']
+                item_dict["description"] = item['description']
+                item_dict["img_path"] = self.img_path(src=item['img'])
+
+                for item_id in item['id'].split(', '):
+                    self.items[item_id] = item_dict
+
+
     def parseLine(self, line):
         """Parse a line.
         """
 
         # Regex
-        re_title = re.match("(#+) (.+)", line)
-        re_img = re.match("\!\[(.+)\]\((.+)\)", line)
+        re_title = re.match("^(#+) (.+)$", line)
+        re_img = re.match("^\!\[(.+)\]\((.+)\)$", line)
+        re_meta = re.match("^\$(\w+)(: (.+))?$", line)
 
         rejected = ["---\n"]
 
@@ -72,6 +87,9 @@ class geoReader():
 
         elif re_img:
             line_parsed += self.parse_image(re_img)
+
+        elif re_meta:
+            line_parsed += self.parse_meta(re_meta)
 
         elif line == "\n":
             if self.pf_inP:
@@ -143,7 +161,7 @@ class geoReader():
             # ... parts list
             f_out.write("\n")
             f_out.write(
-                "<section id=\"partsList\">\n" \
+                "<section id=\"partsList\" class=\"partsList\">\n" \
                 "<h2>Composants</h2>\n" \
                 "<ul>\n")
 
@@ -173,7 +191,7 @@ class geoReader():
             # ... intro
             f_out.write("\n")
             f_out.write(
-                "<section id=\"doc\">\n" \
+                "<section id=\"doc\" class=\"doc\">\n" \
                 "<h2>Notice de montage</h2>\n")
 
             # Parse the rest of the document
@@ -219,6 +237,48 @@ class geoReader():
         parsed_line += "\n"
 
         return parsed_line
+
+    def parse_meta(self, re_meta):
+        """Parse a meta command.
+        syntax:
+            $cmd
+            $cmd: arg1,arg2,...
+        eg
+            $items: C1,C2
+        """
+
+        if len(re_meta.groups()) == 3:
+            if re_meta.group(1) == "items":
+                item_ids = re_meta.group(3).split(', ')
+
+                parsed_line  = "\n"
+                parsed_line += "<div class=\"partsList\"\n>"
+                parsed_line += "<ul>\n"
+                
+                for item_id in item_ids:
+                    item = self.items[item_id]
+
+                    img = self.write_img(src=item["img_path"],
+                            alt=item['description'],
+                            autoPath=False)
+
+                    parsed_line += "" \
+                        "\t<li>\n" \
+                        "\t\t<div class=\"item\">\n" \
+                        "\t\t\t<a href=\"%s\">\n" \
+                        "\t\t\t\t%s\n" \
+                        "\t\t\t</a>\n" \
+                        "\t\t\t<p class=\"item_name\">%s</p>\n" \
+                        "\t\t\t<p class=\"item_description\">%s</p>\n" \
+                        "\t\t</div>\n" \
+                        "\t</li>\n" % (
+                        item["img_path"], img, item_id, item['description'])
+
+                parsed_line += "</ul>\n" 
+                parsed_line += "</div>\n" 
+
+        return parsed_line
+
 
     # -------------
     # -- writers --
